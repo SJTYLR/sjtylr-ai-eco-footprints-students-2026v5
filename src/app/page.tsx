@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Leaf, Zap, Droplet, Car, Trees, Smartphone, Gauge, ChevronDown, ChevronUp, BookOpen, FileText, BarChart2, Calendar, Search, MessageCircle, RefreshCw, CheckCircle, HardDrive, Layers, ImageOff, SearchCheck, FolderOpen } from 'lucide-react'
+import { Leaf, Zap, Droplet, Car, Trees, Smartphone, Gauge, ChevronDown, ChevronUp, BookOpen, FileText, BarChart2, Calendar, Search, MessageCircle, RefreshCw, CheckCircle, HardDrive, Layers, ImageOff, SearchCheck, FolderOpen, Code } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 const COLORS = {
@@ -47,22 +47,24 @@ const EFFICIENCY_MULTIPLIERS = {
 const TASK_FACTORS = {
   textGen: { energyKwhPerUnit: 0.00027, waterMlPerUnit: 0.00026, name: 'Text Generation', unit: 'queries', icon: Zap, color: COLORS.accent },
   images: { energyKwhPerUnit: 0.0014, name: 'Image Generation', unit: 'images', icon: Smartphone, color: COLORS.secondary },
-  coding: { energyKwhPerUnit: 0.0003, name: 'Coding Tasks', unit: 'tasks', icon: Gauge, color: COLORS.highlight },
+  codingSessions: { energyKwhPerUnit: 0.041, name: 'Coding Sessions', unit: 'sessions', icon: Code, color: COLORS.highlight },
   video: { energyKwhPerUnit: 12, name: 'Video Generation', unit: 'minutes', icon: Smartphone, color: COLORS.crimson },
   audio: { energyKwhPerUnit: 0.06, name: 'Audio Generation', unit: 'minutes', icon: Smartphone, color: COLORS.tertiary },
   analysis: { energyKwhPerUnit: 0.0005, name: 'Data Analysis', unit: 'tasks', icon: Gauge, color: COLORS.primary },
-  deepResearch: { energyKwhPerUnit: 0.0054, name: 'Deep Research', unit: 'queries', icon: Search, color: COLORS.mango }
+  deepResearch: { energyKwhPerUnit: 0.0054, name: 'Deep Research', unit: 'queries', icon: Search, color: COLORS.mango },
+  aiSearch: { energyKwhPerUnit: 0.0029, name: 'AI Search', unit: 'queries', icon: SearchCheck, color: COLORS.secondary }
 }
 
 export default function Home() {
   const [tasks, setTasks] = useState({
     textGen: 0,
     images: 0,
-    coding: 0,
+    codingSessions: 0,
     video: 0,
     audio: 0,
     analysis: 0,
-    deepResearch: 0
+    deepResearch: 0,
+    aiSearch: 0
   })
 
   const [results, setResults] = useState<any>(null)
@@ -144,7 +146,7 @@ export default function Home() {
   }
 
   const resetForm = () => {
-    setTasks({ textGen: 0, images: 0, coding: 0, video: 0, audio: 0, analysis: 0, deepResearch: 0 })
+    setTasks({ textGen: 0, images: 0, codingSessions: 0, video: 0, audio: 0, analysis: 0, deepResearch: 0, aiSearch: 0 })
     setUserLocation('mixed')
     setAiModelEfficiency('lessEfficient')
     setResults(null)
@@ -172,7 +174,7 @@ export default function Home() {
           <CardContent className="pt-6">
             <h2 className="text-lg font-semibold mb-3" style={{ color: COLORS.primary }}>About This App</h2>
             <p className="text-sm" style={{ color: COLORS.mutedDark }}>
-              This tool helps students estimate and visualise the environmental impacts of using AI. By entering your AI usage (such as text generation, deep research, image creation, coding tasks, video generation, audio generation, and data analysis), you can understand the energy consumption, carbon emissions, and water usage associated with your activities.
+              This tool helps students estimate and visualise environmental impacts of using AI. By entering your AI usage (such as text generation, deep research, image creation, coding sessions, video generation, audio generation, data analysis, and AI search), you can understand the energy consumption, carbon emissions, and water usage associated with your activities.
             </p>
             <p className="text-sm mt-2" style={{ color: COLORS.mutedDark }}>
               The calculator uses average electricity grid impacts and the most popular AI models to provide estimates. You can explore how different energy grid types and AI model efficiencies affect these impacts by expanding the sections below.
@@ -468,15 +470,22 @@ export default function Home() {
                       <Car className="h-5 w-5" style={{ color: COLORS.white }} />
                       <span className="text-sm font-medium" style={{ color: COLORS.white }}>{distanceUnit === 'km' ? 'km Driven' : 'Miles Driven'}</span>
                     </div>
-                    <div className="text-2xl font-bold" style={{ color: COLORS.white }}>
+                    <div className="text-2xl font-bold mb-2" style={{ color: COLORS.white }}>
                       {distanceUnit === 'km' ? results.equivalencies.kmDriven.toFixed(1) : results.equivalencies.milesDriven.toFixed(1)}
                     </div>
+                    <Button
+                      onClick={() => setDistanceUnit(distanceUnit === 'km' ? 'miles' : 'km')}
+                      className="px-3 py-1 text-xs rounded"
+                      style={{ backgroundColor: 'rgba(0,0,0,0.3)', color: COLORS.white, border: 'none' }}
+                    >
+                      {distanceUnit === 'km' ? 'Switch to Miles' : 'Switch to km'}
+                    </Button>
                   </div>
 
                   <div className="p-4 rounded-lg shadow-md" style={{ backgroundColor: RGBA.mango60 }}>
                     <div className="flex items-center gap-2 mb-2">
                       <Trees className="h-5 w-5" style={{ color: COLORS.white }} />
-                      <span className="text-sm font-medium" style={{ color: COLORS.white }}>Tree Offset</span>
+                      <span className="text-sm font-medium" style={{ color: COLORS.white }}>Tree Offset (months of growth)</span>
                     </div>
                     <div className="text-2xl font-bold" style={{ color: COLORS.white }}>
                       {results.equivalencies.treeMonths.toFixed(1)} mo
@@ -512,16 +521,6 @@ export default function Home() {
                       {results.equivalencies.lightbulbHours.toFixed(1)}
                     </div>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2 mt-4">
-                  <Button
-                    onClick={() => setDistanceUnit(distanceUnit === 'km' ? 'miles' : 'km')}
-                    className="px-4 py-2 text-sm rounded-lg"
-                    style={{ backgroundColor: distanceUnit === 'km' ? 'rgba(255,255,255,255,0.3)' : 'transparent', color: distanceUnit === 'km' ? COLORS.white : COLORS.primary, border: `1px solid ${distanceUnit === 'km' ? COLORS.primary : 'rgba(255,255,255,255,0.3)'}` }}
-                  >
-                    {distanceUnit === 'km' ? 'Switch to Miles' : 'Switch to km'}
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -866,7 +865,8 @@ export default function Home() {
                     <li><strong style={{ color: COLORS.primary }}>Text Generation:</strong> Base = queries × 0.00027 kWh/query</li>
                     <li><strong style={{ color: COLORS.primary }}>Deep Research:</strong> Base = queries × 0.0054 kWh/query (20× text generation - multi-step reasoning)</li>
                     <li><strong style={{ color: COLORS.primary }}>Image Generation:</strong> Base = images × 0.0014 kWh/image</li>
-                    <li><strong style={{ color: COLORS.primary }}>Coding Tasks:</strong> Base = tasks × 0.0003 kWh/task</li>
+                    <li><strong style={{ color: COLORS.primary }}>Coding Sessions:</strong> Base = sessions × 0.041 kWh/session (median code session cost - much more than single query)</li>
+                    <li><strong style={{ color: COLORS.primary }}>AI Search:</strong> Base = queries × 0.0029 kWh/query (10× traditional search)</li>
                     <li><strong style={{ color: COLORS.primary }}>Video Generation:</strong> Base = minutes × 12 kWh/min</li>
                     <li><strong style={{ color: COLORS.primary }}>Audio Generation:</strong> Base = minutes × 0.06 kWh/min</li>
                     <li><strong style={{ color: COLORS.primary }}>Data Analysis:</strong> Base = tasks × 0.0005 kWh/analysis</li>
@@ -1090,7 +1090,7 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #FF9A62' }}>
+                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #FF9A52' }}>
                   <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
                     EESI - Data Centers & Water Consumption (2024/2025)
                   </h4>
@@ -1128,6 +1128,46 @@ export default function Home() {
                   </p>
                 </div>
 
+                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #3EB1BA' }}>
+                  <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
+                    Simon P. Couch - Electricity Use of AI Coding Agents (January 2026)
+                  </h4>
+                  <p className="text-slate-700 mb-2">
+                    Analysis of energy consumption for coding agent sessions, showing they are orders of magnitude more compute-intensive than simple text queries.
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
+                    <li>Median code session cost: 41 Wh (0.041 kWh)</li>
+                    <li>Coding sessions involve hundreds of longer-than-median queries</li>
+                    <li>Includes system prompts, tool descriptions, and repeated tool calls</li>
+                    <li>Single message triggers 5-10 large queries through tool interactions</li>
+                  </ul>
+                  <p className="text-xs mt-4">
+                    <a href="https://www.simonpcouch.com/blog/2026-01-20-cc-impact/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      <strong>Source:</strong> Simon P. Couch Blog, January 2026
+                    </a>
+                  </p>
+                </div>
+
+                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #FF9A62' }}>
+                  <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
+                    Kanoppi - Search Engines vs AI Energy Consumption (2025)
+                  </h4>
+                  <p className="text-slate-700 mb-2">
+                    Direct comparison of energy consumption between traditional search engines and AI-powered search tools.
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
+                    <li>Google Search: 0.0003 kWh per query (0.2g CO₂)</li>
+                    <li>AI Search (ChatGPT): 0.0029 kWh per query (68g CO₂) - ~10× more energy</li>
+                    <li>AI search emits ~340× more CO₂ than traditional search</li>
+                    <li>Highlights growing importance of energy efficiency in AI development</li>
+                  </ul>
+                  <p className="text-xs mt-4">
+                    <a href="https://kanoppi.co/search-engines-vs-ai-energy-consumption-compared/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      <strong>Source:</strong> Kanoppi, 2025
+                    </a>
+                  </p>
+                </div>
+
                 <div className="p-4 rounded-lg" style={{ backgroundColor: RGBA.lightGray18, border: '1px solid #E5E7EB' }}>
                   <p className="text-xs text-slate-700">
                     <strong>Note:</strong> Actual environmental impact may vary based on specific AI model, provider, data center efficiency, and local energy grid composition. These calculations are estimates based on best available research data from 2024-2025 and are intended for educational purposes.
@@ -1150,7 +1190,7 @@ export default function Home() {
               href="https://sites.google.com/i-biology.net/ai-footprint-estimator/home"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
+              style={{ color: '#3EB1BA', textDecoration: 'underline' }}
             >
               https://sites.google.com/i-biology.net/ai-footprint-estimator/home
             </a>
