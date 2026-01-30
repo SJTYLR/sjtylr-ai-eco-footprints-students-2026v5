@@ -47,11 +47,12 @@ const EFFICIENCY_MULTIPLIERS = {
 const TASK_FACTORS = {
   textGen: { energyKwhPerUnit: 0.00027, waterMlPerUnit: 0.00026, name: 'Text Generation', unit: 'queries', icon: Zap, color: COLORS.accent },
   images: { energyKwhPerUnit: 0.0014, name: 'Image Generation', unit: 'images', icon: Smartphone, color: COLORS.secondary },
-  coding: { energyKwhPerUnit: 0.0003, name: 'Coding Tasks', unit: 'tasks', icon: Gauge, color: COLORS.highlight },
+  coding: { energyKwhPerUnit: 0.041, name: 'Coding Sessions', unit: 'sessions', icon: Gauge, color: COLORS.highlight },
   video: { energyKwhPerUnit: 12, name: 'Video Generation', unit: 'minutes', icon: Smartphone, color: COLORS.crimson },
   audio: { energyKwhPerUnit: 0.06, name: 'Audio Generation', unit: 'minutes', icon: Smartphone, color: COLORS.tertiary },
   analysis: { energyKwhPerUnit: 0.0005, name: 'Data Analysis', unit: 'tasks', icon: Gauge, color: COLORS.primary },
-  deepResearch: { energyKwhPerUnit: 0.0054, name: 'Deep Research', unit: 'queries', icon: Search, color: COLORS.mango }
+  deepResearch: { energyKwhPerUnit: 0.0054, name: 'Deep Research', unit: 'queries', icon: Search, color: COLORS.mango },
+  aiSearch: { energyKwhPerUnit: 0.0029, name: 'AI Search', unit: 'queries', icon: SearchCheck, color: COLORS.secondary }
 }
 
 export default function Home() {
@@ -62,7 +63,8 @@ export default function Home() {
     video: 0,
     audio: 0,
     analysis: 0,
-    deepResearch: 0
+    deepResearch: 0,
+    aiSearch: 0
   })
 
   const [results, setResults] = useState<any>(null)
@@ -144,7 +146,7 @@ export default function Home() {
   }
 
   const resetForm = () => {
-    setTasks({ textGen: 0, images: 0, coding: 0, video: 0, audio: 0, analysis: 0, deepResearch: 0 })
+    setTasks({ textGen: 0, images: 0, coding: 0, video: 0, audio: 0, analysis: 0, deepResearch: 0, aiSearch: 0 })
     setUserLocation('mixed')
     setAiModelEfficiency('lessEfficient')
     setResults(null)
@@ -959,7 +961,8 @@ export default function Home() {
                     <li><strong style={{ color: COLORS.primary }}>Text Generation:</strong> Base = queries × 0.00027 kWh/query</li>
                     <li><strong style={{ color: COLORS.primary }}>Deep Research:</strong> Base = queries × 0.0054 kWh/query (20× text generation - multi-step reasoning)</li>
                     <li><strong style={{ color: COLORS.primary }}>Image Generation:</strong> Base = images × 0.0014 kWh/image</li>
-                    <li><strong style={{ color: COLORS.primary }}>Coding Tasks:</strong> Base = tasks × 0.0003 kWh/task</li>
+                    <li><strong style={{ color: COLORS.primary }}>Coding Sessions:</strong> Base = sessions × 0.041 kWh/session (median code session cost)</li>
+                    <li><strong style={{ color: COLORS.primary }}>AI Search:</strong> Base = queries × 0.0029 kWh/query (median AI search query)</li>
                     <li><strong style={{ color: COLORS.primary }}>Video Generation:</strong> Base = minutes × 12 kWh/min</li>
                     <li><strong style={{ color: COLORS.primary }}>Audio Generation:</strong> Base = minutes × 0.06 kWh/min</li>
                     <li><strong style={{ color: COLORS.primary }}>Data Analysis:</strong> Base = tasks × 0.0005 kWh/analysis</li>
@@ -1159,6 +1162,46 @@ export default function Home() {
                   <p className="text-xs mt-4">
                     <a href="https://arxiv.org/html/2505.07615v2" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                       <strong>Source:</strong> ArXiv, 2025
+                    </a>
+                  </p>
+                </div>
+
+                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #F2B184' }}>
+                  <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
+                    Simon P. Couch - Code Copilot Impact (January 2026)
+                  </h4>
+                  <p className="text-slate-700 mb-2">
+                    Analysis of AI coding agents' environmental impact, comparing AI-assisted vs. human-only programming.
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
+                    <li>Median code session cost: 41 Wh (0.041 kWh)</li>
+                    <li>Correctness-controlled study using USACO database</li>
+                    <li>Compares GPT-4, GPT-4o, and Claude models against human programmers</li>
+                    <li>Provides energy and emissions data for coding sessions</li>
+                  </ul>
+                  <p className="text-xs mt-4">
+                    <a href="https://www.simonpcouch.com/blog/2026-01-20-cc-impact/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      <strong>Source:</strong> simonpcouch.com, January 2026
+                    </a>
+                  </p>
+                </div>
+
+                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #8ED1E2' }}>
+                  <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
+                    Kanoppi - AI Search vs Traditional Search (2025)
+                  </h4>
+                  <p className="text-slate-700 mb-2">
+                    Comparison of energy consumption between AI-powered search and traditional search engines.
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
+                    <li>Median AI search query: 0.0029 kWh</li>
+                    <li>AI search uses significantly more energy than traditional search</li>
+                    <li>Comparison across different AI search providers</li>
+                    <li>Contextualizes AI search energy against everyday activities</li>
+                  </ul>
+                  <p className="text-xs mt-4">
+                    <a href="https://kanoppi.co/search-engines-vs-ai-energy-consumption-compared/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      <strong>Source:</strong> kanoppi.co, 2025
                     </a>
                   </p>
                 </div>
