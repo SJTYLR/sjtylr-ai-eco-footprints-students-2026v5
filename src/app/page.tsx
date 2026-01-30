@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Leaf, Zap, Droplet, Car, Trees, Smartphone, Gauge, ChevronDown, ChevronUp, BookOpen, FileText, BarChart2, Calendar, Search, MessageCircle, RefreshCw, CheckCircle, HardDrive, Layers, ImageOff, SearchCheck, FolderOpen, Code } from 'lucide-react'
+import { Leaf, Zap, Droplet, Car, Trees, Smartphone, Gauge, ChevronDown, ChevronUp, BookOpen, FileText, BarChart2, Calendar, Search, MessageCircle, RefreshCw, CheckCircle, HardDrive, Layers, ImageOff, SearchCheck, FolderOpen } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 const COLORS = {
@@ -47,24 +47,22 @@ const EFFICIENCY_MULTIPLIERS = {
 const TASK_FACTORS = {
   textGen: { energyKwhPerUnit: 0.00027, waterMlPerUnit: 0.00026, name: 'Text Generation', unit: 'queries', icon: Zap, color: COLORS.accent },
   images: { energyKwhPerUnit: 0.0014, name: 'Image Generation', unit: 'images', icon: Smartphone, color: COLORS.secondary },
-  codingSessions: { energyKwhPerUnit: 0.041, name: 'Coding Sessions', unit: 'sessions', icon: Code, color: COLORS.highlight },
+  coding: { energyKwhPerUnit: 0.0003, name: 'Coding Tasks', unit: 'tasks', icon: Gauge, color: COLORS.highlight },
   video: { energyKwhPerUnit: 12, name: 'Video Generation', unit: 'minutes', icon: Smartphone, color: COLORS.crimson },
   audio: { energyKwhPerUnit: 0.06, name: 'Audio Generation', unit: 'minutes', icon: Smartphone, color: COLORS.tertiary },
   analysis: { energyKwhPerUnit: 0.0005, name: 'Data Analysis', unit: 'tasks', icon: Gauge, color: COLORS.primary },
-  deepResearch: { energyKwhPerUnit: 0.0054, name: 'Deep Research', unit: 'queries', icon: Search, color: COLORS.mango },
-  aiSearch: { energyKwhPerUnit: 0.0029, name: 'AI Search', unit: 'queries', icon: SearchCheck, color: COLORS.secondary }
+  deepResearch: { energyKwhPerUnit: 0.0054, name: 'Deep Research', unit: 'queries', icon: Search, color: COLORS.mango }
 }
 
 export default function Home() {
   const [tasks, setTasks] = useState({
     textGen: 0,
     images: 0,
-    codingSessions: 0,
+    coding: 0,
     video: 0,
     audio: 0,
     analysis: 0,
-    deepResearch: 0,
-    aiSearch: 0
+    deepResearch: 0
   })
 
   const [results, setResults] = useState<any>(null)
@@ -146,7 +144,7 @@ export default function Home() {
   }
 
   const resetForm = () => {
-    setTasks({ textGen: 0, images: 0, codingSessions: 0, video: 0, audio: 0, analysis: 0, deepResearch: 0, aiSearch: 0 })
+    setTasks({ textGen: 0, images: 0, coding: 0, video: 0, audio: 0, analysis: 0, deepResearch: 0 })
     setUserLocation('mixed')
     setAiModelEfficiency('lessEfficient')
     setResults(null)
@@ -174,7 +172,7 @@ export default function Home() {
           <CardContent className="pt-6">
             <h2 className="text-lg font-semibold mb-3" style={{ color: COLORS.primary }}>About This App</h2>
             <p className="text-sm" style={{ color: COLORS.mutedDark }}>
-              This tool helps students estimate and visualise environmental impacts of using AI. By entering your AI usage (such as text generation, deep research, image creation, coding sessions, video generation, audio generation, data analysis, and AI search), you can understand the energy consumption, carbon emissions, and water usage associated with your activities.
+              This tool helps students estimate and visualise the environmental impacts of using AI. By entering your AI usage (such as text generation, deep research, image creation, coding tasks, video generation, audio generation, and data analysis), you can understand the energy consumption, carbon emissions, and water usage associated with your activities.
             </p>
             <p className="text-sm mt-2" style={{ color: COLORS.mutedDark }}>
               The calculator uses average electricity grid impacts and the most popular AI models to provide estimates. You can explore how different energy grid types and AI model efficiencies affect these impacts by expanding the sections below.
@@ -210,7 +208,7 @@ export default function Home() {
                   <strong style={{ color: COLORS.primary }}>Grid Type:</strong> The "Mixed Grid" option represents an average of global energy data and accounts for both grid carbon intensity and typical AI model efficiency. This is a reasonable default for general estimation.
                 </p>
                 <p>
-                  Your actual environmental impact may be significantly different depending on your location and AI models you use. Click on the expandable sections below to learn more about grid types and AI model efficiency.
+                  Your actual environmental impact may be significantly different depending on your location and the AI models you use. Click on the expandable sections below to learn more about grid types and AI model efficiency.
                 </p>
               </div>
 
@@ -461,38 +459,48 @@ export default function Home() {
 
             <Card className="mb-8">
               <CardHeader>
-                <CardTitle style={{ color: COLORS.primary }}>Impact Equivalencies</CardTitle>
+                <CardTitle style={{ color: COLORS.primary }}>
+                  Equivalencies
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
-                  <div className="p-4 rounded-lg shadow-md" style={{ backgroundColor: RGBA.coral60 }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: RGBA.coral60 }}>
                     <div className="flex items-center gap-2 mb-2">
                       <Car className="h-5 w-5" style={{ color: COLORS.white }} />
-                      <span className="text-sm font-medium" style={{ color: COLORS.white }}>{distanceUnit === 'km' ? 'km Driven' : 'Miles Driven'}</span>
-                    </div>
-                    <div className="text-2xl font-bold mb-2" style={{ color: COLORS.white }}>
-                      {distanceUnit === 'km' ? results.equivalencies.kmDriven.toFixed(1) : results.equivalencies.milesDriven.toFixed(1)}
+                      <span className="text-sm font-medium" style={{ color: COLORS.white }}>
+                        {distanceUnit === 'km' ? 'km Driven' : 'Miles Driven'}
+                      </span>
                     </div>
                     <Button
                       onClick={() => setDistanceUnit(distanceUnit === 'km' ? 'miles' : 'km')}
-                      className="px-3 py-1 text-xs rounded"
-                      style={{ backgroundColor: 'rgba(0,0,0,0.3)', color: COLORS.white, border: 'none' }}
+                      className="px-3 py-1 text-xs rounded-lg"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.3)', color: COLORS.white, border: '1px solid rgba(255,255,255,0.5)' }}
                     >
                       {distanceUnit === 'km' ? 'Switch to Miles' : 'Switch to km'}
                     </Button>
+                    <div className="text-2xl font-bold" style={{ color: COLORS.white }}>
+                      {distanceUnit === 'km' ? results.equivalencies.kmDriven.toFixed(1) : results.equivalencies.milesDriven.toFixed(1)}
+                    </div>
+                    <p className="text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                      {distanceUnit === 'km' ? 'km' : 'miles'} in average car
+                    </p>
                   </div>
 
-                  <div className="p-4 rounded-lg shadow-md" style={{ backgroundColor: RGBA.mango60 }}>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: RGBA.mango60 }}>
                     <div className="flex items-center gap-2 mb-2">
                       <Trees className="h-5 w-5" style={{ color: COLORS.white }} />
-                      <span className="text-sm font-medium" style={{ color: COLORS.white }}>Tree Offset (months of growth)</span>
+                      <span className="text-sm font-medium" style={{ color: COLORS.white }}>Tree Offset</span>
                     </div>
                     <div className="text-2xl font-bold" style={{ color: COLORS.white }}>
                       {results.equivalencies.treeMonths.toFixed(1)} mo
                     </div>
+                    <p className="text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                      = {results.equivalencies.treeMonths.toFixed(1)} months of tree growth
+                    </p>
                   </div>
 
-                  <div className="p-4 rounded-lg shadow-md" style={{ backgroundColor: RGBA.papaya60 }}>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: RGBA.papaya60 }}>
                     <div className="flex items-center gap-2 mb-2">
                       <Smartphone className="h-5 w-5" style={{ color: COLORS.white }} />
                       <span className="text-sm font-medium" style={{ color: COLORS.white }}>Phone Charges</span>
@@ -500,9 +508,12 @@ export default function Home() {
                     <div className="text-2xl font-bold" style={{ color: COLORS.white }}>
                       {results.equivalencies.phoneCharges.toFixed(1)}
                     </div>
+                    <p className="text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                      Full smartphone charges
+                    </p>
                   </div>
 
-                  <div className="p-4 rounded-lg shadow-md" style={{ backgroundColor: RGBA.lightGray18, border: '1px solid #E5E7EB' }}>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: RGBA.lightGray18 }}>
                     <div className="flex items-center gap-2 mb-2">
                       <Droplet className="h-5 w-5" style={{ color: COLORS.mutedDark }} />
                       <span className="text-sm font-medium" style={{ color: COLORS.mutedDark }}>Showers</span>
@@ -510,9 +521,12 @@ export default function Home() {
                     <div className="text-2xl font-bold" style={{ color: COLORS.mutedDark }}>
                       {results.equivalencies.showers.toFixed(1)}
                     </div>
+                    <p className="text-xs" style={{ color: COLORS.mutedDark }}>
+                      Average showers (65L)
+                    </p>
                   </div>
 
-                  <div className="p-4 rounded-lg shadow-md" style={{ backgroundColor: RGBA.highlight60 }}>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: RGBA.highlight60 }}>
                     <div className="flex items-center gap-2 mb-2">
                       <Gauge className="h-5 w-5" style={{ color: COLORS.white }} />
                       <span className="text-sm font-medium" style={{ color: COLORS.white }}>Lightbulb Hours</span>
@@ -520,6 +534,9 @@ export default function Home() {
                     <div className="text-2xl font-bold" style={{ color: COLORS.white }}>
                       {results.equivalencies.lightbulbHours.toFixed(1)}
                     </div>
+                    <p className="text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                      LED bulb hours
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -528,41 +545,142 @@ export default function Home() {
             {results.taskBreakdown && results.taskBreakdown.length > 0 && (
               <Card className="mb-8">
                 <CardHeader>
-                  <CardTitle style={{ color: COLORS.primary }}>Task Breakdown</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <BarChart2 className="h-5 w-5" style={{ color: COLORS.primary }} />
+                      <CardTitle style={{ color: COLORS.primary }}>
+                        Relative Impact by AI Task Type
+                      </CardTitle>
+                    </div>
+                    <Button
+                      onClick={() => setImpactUnit(impactUnit === 'energy' ? 'carbon' : 'energy')}
+                      className="px-4 py-2 text-sm rounded-lg"
+                      style={{ backgroundColor: impactUnit === 'carbon' ? COLORS.primary : 'transparent', color: impactUnit === 'carbon' ? COLORS.white : COLORS.primary, border: `1px solid ${COLORS.primary}` }}
+                    >
+                      Show: {impactUnit === 'energy' ? 'Carbon (kg CO₂)' : 'Energy (kWh)'}
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {results.taskBreakdown.map((task) => {
-                      const Icon = TASK_FACTORS[task.key as keyof typeof TASK_FACTORS]?.icon || Zap
-                      const color = TASK_FACTORS[task.key as keyof typeof TASK_FACTORS]?.color || COLORS.primary
-                      return (
-                        <div key={task.key} className="p-4 rounded-lg" style={{ border: '1px solid #E5E7EB' }}>
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <Icon className="h-4 w-4" style={{ color }} />
-                              <span className="font-medium" style={{ color: COLORS.primary }}>{task.name}</span>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-sm" style={{ color: COLORS.mutedDark }}>{task.value} {TASK_FACTORS[task.key as keyof typeof TASK_FACTORS]?.unit}</span>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-3 gap-2 text-sm">
-                            <div>
-                              <span className="text-xs" style={{ color: COLORS.mutedDark }}>Energy:</span>
-                              <span className="font-medium" style={{ color: COLORS.secondary }}>{task.energy.toFixed(5)} kWh</span>
-                            </div>
-                            <div>
-                              <span className="text-xs" style={{ color: COLORS.mutedDark }}>CO₂:</span>
-                              <span className="font-medium" style={{ color: COLORS.crimson }}>{task.co2.toFixed(5)} kg</span>
-                            </div>
-                            <div>
-                              <span className="text-xs" style={{ color: COLORS.mutedDark }}>Water:</span>
-                              <span className="font-medium" style={{ color: COLORS.tertiary }}>{task.water.toFixed(2)} L</span>
-                            </div>
-                          </div>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={results.taskBreakdown.map(item => ({
+                        name: item.name,
+                        value: impactUnit === 'energy' ? item.energy : item.co2
+                      }))}>
+                        <XAxis
+                          dataKey="name"
+                          tick={{ fill: COLORS.mutedDark, fontSize: 12 }}
+                          axisLine={{ stroke: '#E5E7EB' }}
+                          tickLine={{ stroke: '#E5E7EB' }}
+                        />
+                        <YAxis
+                          tick={{ fill: COLORS.mutedDark, fontSize: 12 }}
+                          axisLine={{ stroke: '#E5E7EB' }}
+                          tickLine={{ stroke: '#E5E7EB' }}
+                          label={{ value: impactUnit === 'energy' ? '{value} kWh' : '{value} kg CO₂', angle: -90, position: 'insideLeft', fill: COLORS.mutedDark }}
+                        />
+                        <Tooltip
+                          formatter={(value: number) => [`${value.toFixed(4)} ${impactUnit === 'energy' ? 'kWh' : 'kg CO₂'}`, '']}
+                          contentStyle={{
+                            backgroundColor: COLORS.white,
+                            border: `1px solid ${COLORS.lightGray}`,
+                            borderRadius: '4px'
+                          }}
+                        />
+                        <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                          {results.taskBreakdown.map((item, index) => {
+                            const factor = TASK_FACTORS[item.key as keyof typeof TASK_FACTORS]
+                            return <Cell key={`cell-${index}`} fill={factor.color} />
+                          })}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="mt-4 text-sm" style={{ color: COLORS.mutedDark }}>
+                    <p className="mb-2" style={{ color: COLORS.primary }}>
+                      <strong>Breakdown:</strong> This chart shows the relative {impactUnit === 'energy' ? 'energy usage (kWh)' : 'carbon impact (kg CO₂)'} of each AI task type.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {results.taskBreakdown.map((item, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: TASK_FACTORS[item.key as keyof typeof TASK_FACTORS].color }}
+                          />
+                          <span>
+                            <strong>{item.name}:</strong> {impactUnit === 'energy' ? item.energy.toFixed(4) : item.co2.toFixed(4)} {impactUnit === 'energy' ? 'kWh' : 'kg CO₂'}
+                          </span>
                         </div>
-                      )
-                    })}
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-8">
+                    <div className="flex items-center gap-2 mb-4">
+                      <BarChart2 className="h-5 w-5" style={{ color: COLORS.primary }} />
+                      <h4 className="font-semibold" style={{ color: COLORS.primary }}>
+                        Relative Impact Breakdown
+                      </h4>
+                    </div>
+                    <div className="mt-4">
+                      <div className="h-8 mb-2 relative bg-white" style={{ border: '1px solid #E5E7EB', borderRadius: '4px' }}>
+                        <div
+                          className="h-full flex items-center"
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            height: '100%',
+                            width: '100%'
+                          }}
+                        >
+                          {results.taskBreakdown.map((item, index) => {
+                            const totalEnergy = results.totals.energy
+                            const percentage = (item.energy / totalEnergy) * 100
+                            const factor = TASK_FACTORS[item.key as keyof typeof TASK_FACTORS]
+                            return (
+                              <div
+                                key={index}
+                                className="h-full flex items-center justify-center text-xs text-white px-2"
+                                style={{
+                                  width: `${percentage}%`,
+                                  backgroundColor: factor.color,
+                                  transition: 'width 0.3s ease'
+                                }}
+                                title={`${item.name}: ${item.energy.toFixed(4)} kWh (${percentage.toFixed(1)}%)`}
+                              >
+                                <span className="truncate max-w-full">
+                                  {percentage > 5 && `${item.name.split(' ')[0]} (${percentage.toFixed(0)}%)`}
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                      <div className="mt-4 text-xs" style={{ color: COLORS.mutedDark }}>
+                        <p className="mb-2" style={{ color: COLORS.primary }}>
+                          <strong>Breakdown of your AI energy usage</strong> by task type
+                        </p>
+                        <div className="space-y-2">
+                          {results.taskBreakdown.map((item, index) => {
+                            const totalEnergy = results.totals.energy
+                            const percentage = (item.energy / totalEnergy) * 100
+                            const factor = TASK_FACTORS[item.key as keyof typeof TASK_FACTORS]
+                            return (
+                              <div key={index} className="flex items-center gap-2">
+                                <div
+                                  className="w-3 h-3 rounded-full"
+                                  style={{ backgroundColor: factor.color }}
+                                />
+                                <span>
+                                  <strong>{item.name}:</strong> {percentage.toFixed(1)}% ({item.energy.toFixed(4)} kWh)
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -577,132 +695,96 @@ export default function Home() {
                   <div className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" style={{ color: COLORS.primary }} />
                     <CardTitle style={{ color: COLORS.primary }}>
-                      Impact Projections
+                      Time-Based Projections
                     </CardTitle>
                   </div>
                   {showProjections ? <ChevronUp className="h-5 w-5" style={{ color: COLORS.primary }} /> : <ChevronDown className="h-5 w-5" style={{ color: COLORS.primary }} />}
                 </div>
               </CardHeader>
               {showProjections && (
-                <CardContent className="pt-0">
+                <CardContent>
                   <div className="space-y-6">
                     <div className="p-6 rounded-lg" style={{ border: '2px solid #E5E7EB' }}>
                       <h3 className="text-lg font-semibold mb-4" style={{ color: COLORS.primary }}>Weekly (7 days)</h3>
-                      <div className="grid md:grid-cols-2 gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Leaf className="h-5 w-5" style={{ color: COLORS.crimson }} />
-                          <span><strong>{results.projections.week.co2.toFixed(4)} kg CO₂</strong> emissions</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Car className="h-5 w-5" style={{ color: COLORS.secondary }} />
-                          <span>
-                            <strong>= {distanceUnit === 'km' ? results.projections.week.kmDriven.toFixed(1) : results.projections.week.milesDriven.toFixed(1)} {distanceUnit}</strong> driven
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Trees className="h-5 w-5" style={{ color: COLORS.accent }} />
-                          <span>
-                            <strong>= {results.projections.week.treeMonths.toFixed(1)} months</strong> of tree growth
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Smartphone className="h-5 w-5" style={{ color: COLORS.highlight }} />
-                          <span>
-                            <strong>= {results.projections.week.phoneCharges.toFixed(1)} charges</strong>
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Droplet className="h-5 w-5" style={{ color: COLORS.tertiary }} />
-                          <span>
-                            <strong>= {results.projections.week.showers.toFixed(1)} showers</strong>
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Gauge className="h-5 w-5" style={{ color: COLORS.primary }} />
-                          <span>
-                            <strong>= {results.projections.week.lightbulbHours.toFixed(1)} hours</strong>
-                          </span>
-                        </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Leaf className="h-5 w-5" />
+                        <span><strong>{results.projections.week.co2.toFixed(4)} kg CO₂</strong> emissions</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Car className="h-5 w-5" />
+                        <span>
+                          <strong>= {distanceUnit === 'km' ? results.projections.week.kmDriven.toFixed(1) : results.projections.week.milesDriven.toFixed(1)} {distanceUnit}</strong> driven
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Trees className="h-5 w-5" />
+                        <span>
+                          <strong>= {results.projections.week.treeMonths.toFixed(1)} months</strong> of tree growth
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Smartphone className="h-5 w-5" />
+                        <span>
+                          <strong>= {results.projections.week.phoneCharges.toFixed(1)} charges</strong>
+                        </span>
                       </div>
                     </div>
+                  </div>
+                </div>
 
-                    <div className="p-6 rounded-lg" style={{ border: '2px solid #E5E7EB' }}>
-                      <h3 className="text-lg font-semibold mb-4" style={{ color: COLORS.primary }}>Monthly (30 days)</h3>
-                      <div className="grid md:grid-cols-2 gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Leaf className="h-5 w-5" style={{ color: COLORS.crimson }} />
-                          <span><strong>{results.projections.month.co2.toFixed(4)} kg CO₂</strong> emissions</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Car className="h-5 w-5" style={{ color: COLORS.secondary }} />
-                          <span>
-                            <strong>= {distanceUnit === 'km' ? results.projections.month.kmDriven.toFixed(1) : results.projections.month.milesDriven.toFixed(1)} {distanceUnit}</strong> driven
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Trees className="h-5 w-5" style={{ color: COLORS.accent }} />
-                          <span>
-                            <strong>= {results.projections.month.treeMonths.toFixed(1)} months</strong> of tree growth
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Smartphone className="h-5 w-5" style={{ color: COLORS.highlight }} />
-                          <span>
-                            <strong>= {results.projections.month.phoneCharges.toFixed(1)} charges</strong>
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Droplet className="h-5 w-5" style={{ color: COLORS.tertiary }} />
-                          <span>
-                            <strong>= {results.projections.month.showers.toFixed(1)} showers</strong>
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Gauge className="h-5 w-5" style={{ color: COLORS.primary }} />
-                          <span>
-                            <strong>= {results.projections.month.lightbulbHours.toFixed(1)} hours</strong>
-                          </span>
-                        </div>
+                  <div className="p-6 rounded-lg" style={{ border: '2px solid #E5E7EB' }}>
+                    <h3 className="text-lg font-semibold mb-4" style={{ color: COLORS.primary }}>Monthly (30 days)</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Leaf className="h-5 w-5" />
+                        <span><strong>{results.projections.month.co2.toFixed(4)} kg CO₂</strong> emissions</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Car className="h-5 w-5" />
+                        <span>
+                          <strong>= {distanceUnit === 'km' ? results.projections.month.kmDriven.toFixed(1) : results.projections.month.milesDriven.toFixed(1)} {distanceUnit}</strong> driven
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Trees className="h-5 w-5" />
+                        <span>
+                          <strong>= {results.projections.month.treeMonths.toFixed(1)} months</strong> of tree growth
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Smartphone className="h-5 w-5" />
+                        <span>
+                          <strong>= {results.projections.month.phoneCharges.toFixed(1)} charges</strong>
+                        </span>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="p-6 rounded-lg" style={{ border: '2px solid #E5E7EB' }}>
-                      <h3 className="text-lg font-semibold mb-4" style={{ color: COLORS.primary }}>Semester (140 days)</h3>
-                      <div className="grid md:grid-cols-2 gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Leaf className="h-5 w-5" style={{ color: COLORS.crimson }} />
-                          <span><strong>{results.projections.semester.co2.toFixed(4)} kg CO₂</strong> emissions</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Car className="h-5 w-5" style={{ color: COLORS.secondary }} />
-                          <span>
-                            <strong>= {distanceUnit === 'km' ? results.projections.semester.kmDriven.toFixed(1) : results.projections.semester.milesDriven.toFixed(1)} {distanceUnit}</strong> driven
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Trees className="h-5 w-5" style={{ color: COLORS.accent }} />
-                          <span>
-                            <strong>= {results.projections.semester.treeMonths.toFixed(1)} months</strong> of tree growth
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Smartphone className="h-5 w-5" style={{ color: COLORS.highlight }} />
-                          <span>
-                            <strong>= {results.projections.semester.phoneCharges.toFixed(1)} charges</strong>
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Droplet className="h-5 w-5" style={{ color: COLORS.tertiary }} />
-                          <span>
-                            <strong>= {results.projections.semester.showers.toFixed(1)} showers</strong>
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Gauge className="h-5 w-5" style={{ color: COLORS.primary }} />
-                          <span>
-                            <strong>= {results.projections.semester.lightbulbHours.toFixed(1)} hours</strong>
-                          </span>
-                        </div>
+                  <div className="p-6 rounded-lg" style={{ border: '2px solid #E5E7EB' }}>
+                    <h3 className="text-lg font-semibold mb-4" style={{ color: COLORS.primary }}>Semester (140 days / 20 weeks)</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Leaf className="h-5 w-5" />
+                        <span><strong>{results.projections.semester.co2.toFixed(4)} kg CO₂</strong> emissions</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Car className="h-5 w-5" />
+                        <span>
+                          <strong>= {distanceUnit === 'km' ? results.projections.semester.kmDriven.toFixed(1) : results.projections.semester.milesDriven.toFixed(1)} {distanceUnit}</strong> driven
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Trees className="h-5 w-5" />
+                        <span>
+                          <strong>= {results.projections.semester.treeMonths.toFixed(1)} months</strong> of tree growth
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base" style={{ color: COLORS.mutedDark }}>
+                        <Smartphone className="h-5 w-5" />
+                        <span>
+                          <strong>= {results.projections.semester.phoneCharges.toFixed(1)} charges</strong>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -733,6 +815,18 @@ export default function Home() {
               <div className="space-y-4 text-sm" style={{ color: COLORS.mutedDark }}>
                 <div className="p-4 rounded-lg" style={{ backgroundColor: COLORS.white, border: '2px solid #E5E7EB' }}>
                   <div className="flex items-start gap-3">
+                    <Zap className="h-6 w-6 mt-1" style={{ color: COLORS.highlight }} />
+                    <div>
+                      <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>Don't Use AI If You Don't Need To</h4>
+                      <p className="text-sm">
+                        You have a very powerful thinking machine inside your head... your brain! It already takes a lot of energy to keep it working, so give it a good workout.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg" style={{ backgroundColor: COLORS.white, border: '2px solid #E5E7EB' }}>
+                  <div className="flex items-start gap-3">
                     <MessageCircle className="h-6 w-6 mt-1" style={{ color: COLORS.secondary }} />
                     <div>
                       <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>Practice Prompt Hygiene</h4>
@@ -749,7 +843,7 @@ export default function Home() {
                     <div>
                       <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>Reuse & Refine Outputs</h4>
                       <p className="text-sm">
-                        Instead of regenerating content, manually edit and improve AI outputs yourself. Save useful responses for future reference instead of asking AI to regenerate similar content multiple times.
+                        Instead of regenerating content, manually edit and improve AI outputs yourself. Save useful responses for future reference instead of asking the AI to regenerate similar content multiple times.
                       </p>
                     </div>
                   </div>
@@ -773,7 +867,7 @@ export default function Home() {
                     <div>
                       <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>Use Local Models When Possible</h4>
                       <p className="text-sm">
-                        If you have computing resources, consider running AI models locally (with tools like Ollama or LM Studio). This can reduce energy usage if your local power comes from clean sources.
+                        If you have the computing resources, consider running AI models locally (with tools like Ollama or LM Studio). This can reduce energy usage if your local power comes from clean sources.
                       </p>
                     </div>
                   </div>
@@ -865,8 +959,7 @@ export default function Home() {
                     <li><strong style={{ color: COLORS.primary }}>Text Generation:</strong> Base = queries × 0.00027 kWh/query</li>
                     <li><strong style={{ color: COLORS.primary }}>Deep Research:</strong> Base = queries × 0.0054 kWh/query (20× text generation - multi-step reasoning)</li>
                     <li><strong style={{ color: COLORS.primary }}>Image Generation:</strong> Base = images × 0.0014 kWh/image</li>
-                    <li><strong style={{ color: COLORS.primary }}>Coding Sessions:</strong> Base = sessions × 0.041 kWh/session (median code session cost - much more than single query)</li>
-                    <li><strong style={{ color: COLORS.primary }}>AI Search:</strong> Base = queries × 0.0029 kWh/query (10× traditional search)</li>
+                    <li><strong style={{ color: COLORS.primary }}>Coding Tasks:</strong> Base = tasks × 0.0003 kWh/task</li>
                     <li><strong style={{ color: COLORS.primary }}>Video Generation:</strong> Base = minutes × 12 kWh/min</li>
                     <li><strong style={{ color: COLORS.primary }}>Audio Generation:</strong> Base = minutes × 0.06 kWh/min</li>
                     <li><strong style={{ color: COLORS.primary }}>Data Analysis:</strong> Base = tasks × 0.0005 kWh/analysis</li>
@@ -959,7 +1052,7 @@ export default function Home() {
                     MIT Technology Review (December 2023)
                   </h4>
                   <p className="text-slate-700 mb-2">
-                    Featured article on environmental cost of generating images with AI, highlighting energy consumption and emissions data.
+                    Featured article on the environmental cost of generating images with AI, highlighting energy consumption and emissions data.
                   </p>
                   <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
                     <li>"Making an image with generative AI uses as much energy as charging your phone"</li>
@@ -989,26 +1082,6 @@ export default function Home() {
                   <p className="text-xs mt-4">
                     <a href="https://hannahritchie.substack.com/p/ai-footprint-august-2025" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                       <strong>Source:</strong> Substack "Our World in Data", August 2025
-                    </a>
-                  </p>
-                </div>
-
-                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #60A5FA' }}>
-                  <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
-                    Our World in Data - Artificial Intelligence
-                  </h4>
-                  <p className="text-slate-700 mb-2">
-                    Comprehensive resource featuring many interactive charts and short articles exploring AI adoption, development, and environmental impacts worldwide.
-                  </p>
-                  <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
-                    <li>Interactive visualizations of AI adoption trends</li>
-                    <li>Data on AI computing power and energy use</li>
-                    <li>Global comparisons across countries and applications</li>
-                    <li>Short, accessible articles on AI topics</li>
-                  </ul>
-                  <p className="text-xs mt-4">
-                    <a href="https://ourworldindata.org/artificial-intelligence" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                      <strong>Source:</strong> Our World in Data - Artificial Intelligence
                     </a>
                   </p>
                 </div>
@@ -1090,36 +1163,37 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #FF9A52' }}>
+                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #FF9A62' }}>
                   <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
                     EESI - Data Centers & Water Consumption (2024/2025)
                   </h4>
                   <p className="text-slate-700 mb-2">
-                    Analysis of data center water usage efficiency across major cloud providers and AI companies.
+                    Analysis of data center water usage and AI's growing water footprint.
                   </p>
-                  <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
-                    <li>Water Usage Efficiency (WUE) varies by provider</li>
-                    <li>Industry benchmark: 1.8 L/kWh average</li>
-                    <li>Some providers significantly worse than average</li>
+                  <ul className="list-disc list-inside space-y-1 mb-2" style={{ color: COLORS.mutedDark }}>
+                    <li>UC Riverside: 519 mL water per 100-word AI prompt</li>
+                    <li>Average WUE: 1.9 L per kWh across data centers</li>
+                    <li>Large data centers: up to 5 million gallons/day</li>
+                    <li>Water usage increasing with AI adoption</li>
                   </ul>
                   <p className="text-xs mt-4">
-                    <a href="https://www.eesi.se/2024/data-centers-water-consumption" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                      <strong>Source:</strong> EESI, 2024/2025
+                    <a href="https://www.esi.org/articles/view/data-centers-and-water-consumption" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      <strong>Source:</strong> Environmental and Energy Study Institute (EESI), 2024-2025
                     </a>
                   </p>
                 </div>
 
-                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #60A5FA' }}>
+                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #482734' }}>
                   <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
-                    EPA - Vehicle Emissions Factors
+                    US EPA - Greenhouse Gas Equivalencies
                   </h4>
                   <p className="text-slate-700 mb-2">
-                    Standard conversion factors for calculating CO₂ emissions from vehicle travel.
+                    Standard conversion factors for environmental equivalencies.
                   </p>
                   <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
-                    <li>Average passenger vehicle: 0.25 kg CO₂/km</li>
-                    <li>Used for equivalency calculations</li>
-                    <li>Based on standard vehicle emission testing</li>
+                    <li>21 kg CO₂ sequestered per tree per year</li>
+                    <li>0.25 kg CO₂ per kilometer (0.407 kg CO₂ per mile for US EPA: 400g/mile)</li>
+                    <li>Standard conversion factors for environmental calculations</li>
                   </ul>
                   <p className="text-xs mt-4">
                     <a href="https://www.epa.gov/greenhouse-gas-emissions-typical-passenger-vehicle" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
@@ -1128,42 +1202,22 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #3EB1BA' }}>
+                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #60A5FA' }}>
                   <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
-                    Simon P. Couch - Electricity Use of AI Coding Agents (January 2026)
+                    Our World in Data - Artificial Intelligence
                   </h4>
                   <p className="text-slate-700 mb-2">
-                    Analysis of energy consumption for coding agent sessions, showing they are orders of magnitude more compute-intensive than simple text queries.
+                    Comprehensive resource featuring many interactive charts and short articles exploring AI adoption, development, and environmental impacts worldwide.
                   </p>
                   <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
-                    <li>Median code session cost: 41 Wh (0.041 kWh)</li>
-                    <li>Coding sessions involve hundreds of longer-than-median queries</li>
-                    <li>Includes system prompts, tool descriptions, and repeated tool calls</li>
-                    <li>Single message triggers 5-10 large queries through tool interactions</li>
+                    <li>Interactive visualizations of AI adoption trends</li>
+                    <li>Data on AI computing power and energy use</li>
+                    <li>Global comparisons across countries and applications</li>
+                    <li>Short, accessible articles on AI topics</li>
                   </ul>
                   <p className="text-xs mt-4">
-                    <a href="https://www.simonpcouch.com/blog/2026-01-20-cc-impact/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                      <strong>Source:</strong> Simon P. Couch Blog, January 2026
-                    </a>
-                  </p>
-                </div>
-
-                <div className="rounded-lg p-4 mb-6" style={{ borderLeft: '4px solid #FF9A62' }}>
-                  <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
-                    Kanoppi - Search Engines vs AI Energy Consumption (2025)
-                  </h4>
-                  <p className="text-slate-700 mb-2">
-                    Direct comparison of energy consumption between traditional search engines and AI-powered search tools.
-                  </p>
-                  <ul className="list-disc list-inside space-y-1 ml-2 mb-2" style={{ color: COLORS.mutedDark }}>
-                    <li>Google Search: 0.0003 kWh per query (0.2g CO₂)</li>
-                    <li>AI Search (ChatGPT): 0.0029 kWh per query (68g CO₂) - ~10× more energy</li>
-                    <li>AI search emits ~340× more CO₂ than traditional search</li>
-                    <li>Highlights growing importance of energy efficiency in AI development</li>
-                  </ul>
-                  <p className="text-xs mt-4">
-                    <a href="https://kanoppi.co/search-engines-vs-ai-energy-consumption-compared/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                      <strong>Source:</strong> Kanoppi, 2025
+                    <a href="https://ourworldindata.org/artificial-intelligence" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      <strong>Source:</strong> Our World in Data - Artificial Intelligence
                     </a>
                   </p>
                 </div>
@@ -1190,9 +1244,9 @@ export default function Home() {
               href="https://sites.google.com/i-biology.net/ai-footprint-estimator/home"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#3EB1BA', textDecoration: 'underline' }}
+              className="text-blue-600 hover:underline"
             >
-              https://sites.google.com/i-biology.net/ai-footprint-estimator/home
+              sites.google.com/i-biology.net/ai-footprint-estimator/home
             </a>
           </p>
         </div>
